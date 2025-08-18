@@ -35,7 +35,7 @@ type listItem struct {
 	LastPrice string `json:"last_price"`
 }
 
-func (b *Bybit) Get_futures_ticker() ([]cex.CexResultListItem, error) {
+func (b *Bybit) GetFuturesTicker() ([]cex.CexResultListItem, error) {
 	resp, err := b.client.Get(b.config.BybitUrl)
 	if err != nil {
 		log.Printf("an error occured %s", err)

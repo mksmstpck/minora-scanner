@@ -1,12 +1,11 @@
 package services
 
-const {
+const (
 	Binance = iota
 	Bybit
 	Gate
 	Kucoin
-	
-}
+)
 
 func (s *Servieces) ScanAllCexes() {
 

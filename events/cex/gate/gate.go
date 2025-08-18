@@ -27,7 +27,7 @@ type ticker struct {
 	Last     string `json:"last"`
 }
 
-func (b *Gate) Get_futures_ticker() ([]cex.CexResultListItem, error) {
+func (b *Gate) GetFuturesTicker() ([]cex.CexResultListItem, error) {
 	resp, err := b.client.Get(b.config.GateUrl)
 	if err != nil {
 		log.Printf("an error occured %s", err)

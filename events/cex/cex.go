@@ -18,5 +18,5 @@ type CexResultListItem struct {
 }
 
 type Cexer interface {
-	Get_futures_ticker() ([]CexResultListItem, error)
+	GetFuturesTicker() ([]CexResultListItem, error)
 }

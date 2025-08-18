@@ -31,7 +31,7 @@ type data struct {
 	Price  string `json:"pirce"`
 }
 
-func (b *Kucoin) Get_futures_ticker() ([]cex.CexResultListItem, error) {
+func (b *Kucoin) GetFuturesTicker() ([]cex.CexResultListItem, error) {
 	resp, err := b.client.Get(b.config.KucoinUrl)
 	if err != nil {
 		log.Printf("an error occured %s", err)

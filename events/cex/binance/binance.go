@@ -27,7 +27,7 @@ type ticker struct {
 	Price  string `json:"price"`
 }
 
-func (b *Binance) Get_futures_ticker() ([]cex.CexResultListItem, error) {
+func (b *Binance) GetFuturesTicker() ([]cex.CexResultListItem, error) {
 	resp, err := b.client.Get(b.config.BinanceUrl)
 	if err != nil {
 		log.Printf("an error occured %s", err)

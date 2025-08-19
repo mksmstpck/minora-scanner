@@ -2,7 +2,11 @@ module github.com/mksmstpck/minora-scanner
 
 go 1.24.4
 
-require github.com/spf13/viper v1.20.1
+require (
+	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/sirupsen/logrus v1.9.3
+	github.com/spf13/viper v1.20.1
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect

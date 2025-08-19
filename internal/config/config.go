@@ -1,13 +1,17 @@
 package config
 
 import (
+	"time"
+
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
 	Token             string
 	ChatID            string
-	BinanceUrl        string
+	BinanceTickerUrl  string
+	BinanceCexInfoUrl string
 	BybitUrl          string
 	GateUrl           string
 	KucoinUrl         string
@@ -15,6 +19,7 @@ type Config struct {
 	MinPairSpread     float64
 	MaxPairSpread     float64
 	CoingeckoBulkData string
+	CacheExpMin       time.Duration
 }
 
 func NewConfig() Config {
@@ -24,12 +29,13 @@ func NewConfig() Config {
 	viper.AddConfigPath(".")
 
 	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
+		logrus.Error(err)
 	}
 	return Config{
 		Token:             viper.GetString("TOKEN"),
 		ChatID:            viper.GetString("CHAT_ID"),
-		BinanceUrl:        viper.GetString("BINANCE_URL"),
+		BinanceTickerUrl:  viper.GetString("BINANCE_URL"),
+		BinanceCexInfoUrl: viper.GetString("BINANCE1_URL"),
 		BybitUrl:          viper.GetString("BYBIT_URL"),
 		GateUrl:           viper.GetString("GATE_URL"),
 		KucoinUrl:         viper.GetString("KUCOIN_URL"),
@@ -37,5 +43,6 @@ func NewConfig() Config {
 		MinPairSpread:     viper.GetFloat64("MIN_PAIR_SPREAD"),
 		MaxPairSpread:     viper.GetFloat64("MAX_PAIR_SPREAD"),
 		CoingeckoBulkData: viper.GetString("COINGECKO_BULK_DATA"),
+		CacheExpMin:       time.Duration(viper.GetInt("CACHE_EXP_MIN")) * time.Minute,
 	}
 }

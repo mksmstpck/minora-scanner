@@ -10,7 +10,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var blacklist = []string{}
+var blacklist = []string{
+	"TRUMPUSDT",
+	"ALLUSDT",
+	"NEIROUSDT",
+}
 
 type Filtered struct {
 	Coin   string

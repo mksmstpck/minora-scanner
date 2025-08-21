@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	Token             string
-	ChatID            string
+	ChatID            int64
 	BinanceTickerUrl  string
 	BinanceCexInfoUrl string
 	BybitUrl          string
@@ -33,7 +33,7 @@ func NewConfig() Config {
 	}
 	return Config{
 		Token:             viper.GetString("TOKEN"),
-		ChatID:            viper.GetString("CHAT_ID"),
+		ChatID:            viper.GetInt64("CHAT_ID"),
 		BinanceTickerUrl:  viper.GetString("BINANCE_URL"),
 		BinanceCexInfoUrl: viper.GetString("BINANCE1_URL"),
 		BybitUrl:          viper.GetString("BYBIT_URL"),

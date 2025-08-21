@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/mksmstpck/minora-scanner/internal/config"
 	"github.com/mksmstpck/minora-scanner/internal/events"
+	"github.com/mksmstpck/minora-scanner/internal/handlers"
 	"github.com/mksmstpck/minora-scanner/internal/services"
 	"github.com/mksmstpck/minora-scanner/internal/storage"
 	"github.com/patrickmn/go-cache"
@@ -37,20 +39,22 @@ func main() {
 
 	config := config.NewConfig()
 
-	c := cache.New(config.CacheExpMin, config.CacheExpMin)
+	cache := cache.New(config.CacheExpMin, config.CacheExpMin)
 
-	storage := storage.NewStorage(c, config)
+	storage := storage.NewStorage(cache, config)
 
 	events := events.NewEvents(config, &httpClient)
 
 	services := services.NewServiecs(events, storage)
 
-	pairs, err := services.SeekPairs()
-	if err != nil {
-		logrus.Error(err)
-	}
+	handlers := handlers.NewHandlers(&httpClient, config, services)
 
-	for _, pair := range pairs {
-		logrus.Infof("coin: %s \n priceHighCex: %d \n priceLowCex: %d \n spread: %f", pair.Coin, pair.PriceHigh.CexType, pair.PriceLow.CexType, pair.SpreadPercents)
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		<-ticker.C
+
+		handlers.SendPairs()
 	}
 }

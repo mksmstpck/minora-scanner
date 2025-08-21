@@ -14,6 +14,23 @@ const (
 	Mexc
 )
 
+func (c CexType) Name() string {
+	switch c {
+	case 0:
+		return "Binance"
+	case 1:
+		return "Bybit"
+	case 2:
+		return "Gate"
+	case 3:
+		return "Kucoin"
+	case 4:
+		return "Mexc"
+	default:
+		return ""
+	}
+}
+
 type Price struct {
 	CexType CexType
 	Price   float64

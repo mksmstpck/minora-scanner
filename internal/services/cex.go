@@ -114,5 +114,13 @@ func (s *Services) SeekPairs() ([]models.Pair, error) {
 			})
 		}
 	}
-	return pairs, nil
+
+	var newPairs []models.Pair
+	for _, pair := range pairs {
+		if !s.storage.CheckExists(pair) {
+			newPairs = append(newPairs, pair)
+			s.storage.SetPair(pair)
+		}
+	}
+	return newPairs, nil
 }

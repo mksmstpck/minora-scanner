@@ -36,5 +36,5 @@ func (s *Storage) CheckExists(pair models.Pair) bool {
 }
 
 func (s *Storage) genKey(pair models.Pair) string {
-	return fmt.Sprintf("%f%f%s", pair.PriceHigh.Price, pair.PriceLow.Price, pair.Coin)
+	return fmt.Sprintf("%d%d%s", pair.PriceHigh.CexType, pair.PriceLow.CexType, pair.Coin)
 }

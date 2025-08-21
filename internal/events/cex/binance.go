@@ -2,7 +2,6 @@ package cex
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -40,14 +39,14 @@ func (b *Binance) GetFuturesTicker() ([]CexResultListItem, error) {
 	resp, err := b.client.Get(b.config.BinanceTickerUrl)
 	logrus.Info(resp.Body)
 	if err != nil {
-		log.Printf("an error occured %s", err)
+		logrus.Errorf("an error occured %s", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	var result []tickerBinance
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		log.Printf("an error occured %s", err)
+		logrus.Errorf("an error occured %s", err)
 		return nil, err
 	}
 

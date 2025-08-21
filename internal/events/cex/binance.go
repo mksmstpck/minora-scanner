@@ -37,12 +37,13 @@ func (b *Binance) GetFuturesTicker() ([]CexResultListItem, error) {
 	}
 
 	resp, err := b.client.Get(b.config.BinanceTickerUrl)
-	logrus.Info(resp.Body)
 	if err != nil {
 		logrus.Errorf("an error occured %s", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	logrus.Info(resp.Body)
 
 	var result []tickerBinance
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {

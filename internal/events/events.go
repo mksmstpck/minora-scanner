@@ -15,7 +15,7 @@ type Events struct {
 
 func NewEvents(config config.Config, client *http.Client) Events {
 	return Events{
-		Coingecko: coingecko.NewCoingecko(),
+		Coingecko: coingecko.NewCoingecko(config, client),
 		Cex:       cex.NewCex(config, client),
 	}
 }

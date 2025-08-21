@@ -2,12 +2,15 @@ package services
 
 import (
 	"fmt"
+	"slices"
 	"sync"
 
 	"github.com/mksmstpck/minora-scanner/internal/events/cex"
 	"github.com/mksmstpck/minora-scanner/internal/models"
 	"github.com/sirupsen/logrus"
 )
+
+var blacklist = []string{}
 
 type Filtered struct {
 	Coin   string
@@ -105,7 +108,7 @@ func (s *Services) SeekPairs() ([]models.Pair, error) {
 		}
 
 		spread := ((max.Price - min.Price) / min.Price) * 100.0
-		if spread > 1.5 {
+		if spread > 5 {
 			pairs = append(pairs, models.Pair{
 				PriceHigh:      max,
 				PriceLow:       min,
@@ -117,10 +120,11 @@ func (s *Services) SeekPairs() ([]models.Pair, error) {
 
 	var newPairs []models.Pair
 	for _, pair := range pairs {
-		if !s.storage.CheckExists(pair) {
+		if !s.storage.CheckExists(pair) && !slices.Contains(blacklist, pair.Coin) {
 			newPairs = append(newPairs, pair)
 			s.storage.SetPair(pair)
 		}
 	}
+
 	return newPairs, nil
 }

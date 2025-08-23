@@ -43,8 +43,6 @@ func (b *Binance) GetFuturesTicker() ([]CexResultListItem, error) {
 	}
 	defer resp.Body.Close()
 
-	logrus.Info(resp.Body)
-
 	var result []tickerBinance
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		logrus.Errorf("an error occured %s", err)
@@ -54,12 +52,11 @@ func (b *Binance) GetFuturesTicker() ([]CexResultListItem, error) {
 	var cexResult []CexResultListItem
 	for _, r := range result {
 		if !activeSymbols[r.Symbol] {
-			logrus.Printf("skipping inactive symbol: %s", r.Symbol)
 			continue
 		}
 
 		if r.Price == "" {
-			logrus.Printf("empty price string for %s", r.Symbol)
+			logrus.Infof("empty price string for %s", r.Symbol)
 			continue
 		}
 		price, err := strconv.ParseFloat(r.Price, 64)
@@ -86,11 +83,11 @@ func (b *Binance) GetFuturesTicker() ([]CexResultListItem, error) {
 	return cexResult, nil
 }
 
-type info struct {
-	Symbols []symbol `json:"symbols"`
+type infoBinance struct {
+	Symbols []symbolBinance `json:"symbols"`
 }
 
-type symbol struct {
+type symbolBinance struct {
 	Symbol string `json:"symbol"`
 	Status string `json:"status"`
 }
@@ -103,7 +100,7 @@ func (b *Binance) getCexInfo() (map[string]bool, error) {
 	}
 	defer resp.Body.Close()
 
-	var result info
+	var result infoBinance
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		logrus.Error(err)
 		return nil, err

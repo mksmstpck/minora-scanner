@@ -34,8 +34,14 @@ type dataKucoin struct {
 	Price  string `json:"price"`
 }
 
-func (b *Kucoin) GetFuturesTicker() ([]CexResultListItem, error) {
-	resp, err := b.client.Get(b.config.KucoinUrl)
+func (k *Kucoin) GetFuturesTicker() ([]CexResultListItem, error) {
+	activeSymbols, err := k.getCexInfo()
+	if err != nil {
+		logrus.Errorf("an error occured %s", err)
+		return nil, err
+	}
+
+	resp, err := k.client.Get(k.config.KucoinTickerUrl)
 	if err != nil {
 		log.Printf("an error occured %s", err)
 		return nil, err
@@ -51,6 +57,10 @@ func (b *Kucoin) GetFuturesTicker() ([]CexResultListItem, error) {
 
 	var cexResult []CexResultListItem
 	for _, r := range result.Data {
+		if !activeSymbols[r.Symbol] {
+			continue
+		}
+
 		if r.Price == "" {
 			logrus.Printf("empty price string for %s", r.Symbol)
 			continue
@@ -78,4 +88,37 @@ func (b *Kucoin) GetFuturesTicker() ([]CexResultListItem, error) {
 	}
 
 	return cexResult, nil
+}
+
+type resultKucoin struct {
+	Data []dataListItemKucoin `json:"data"`
+}
+
+type dataListItemKucoin struct {
+	Symbol string `json:"symbol"`
+	Status string `json:"status"`
+}
+
+func (k *Kucoin) getCexInfo() (map[string]bool, error) {
+	resp, err := k.client.Get(k.config.KucoinCexInfoUrl)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result resultKucoin
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
+	validated := make(map[string]bool)
+	for _, symbol := range result.Data {
+		if symbol.Status == "Open" {
+			validated[symbol.Symbol] = true
+		}
+	}
+
+	return validated, nil
 }

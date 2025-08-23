@@ -45,7 +45,7 @@ func main() {
 
 	events := events.NewEvents(config, &httpClient)
 
-	services := services.NewServiecs(events, storage)
+	services := services.NewServiecs(events, storage, config)
 
 	handlers := handlers.NewHandlers(&httpClient, config, services)
 

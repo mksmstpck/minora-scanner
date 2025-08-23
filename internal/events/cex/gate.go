@@ -30,8 +30,14 @@ type tickerGate struct {
 	Last     string `json:"last"`
 }
 
-func (b *Gate) GetFuturesTicker() ([]CexResultListItem, error) {
-	resp, err := b.client.Get(b.config.GateUrl)
+func (g *Gate) GetFuturesTicker() ([]CexResultListItem, error) {
+	activeSymbols, err := g.getCexInfo()
+	if err != nil {
+		logrus.Errorf("an error occured %s", err)
+		return nil, err
+	}
+
+	resp, err := g.client.Get(g.config.GateTickerUrl)
 	if err != nil {
 		log.Printf("an error occured %s", err)
 		return nil, err
@@ -47,6 +53,10 @@ func (b *Gate) GetFuturesTicker() ([]CexResultListItem, error) {
 
 	var cexResult []CexResultListItem
 	for _, r := range result {
+		if !activeSymbols[r.Contract] {
+			continue
+		}
+
 		if r.Last == "" {
 			logrus.Printf("empty price string for %s", r.Contract)
 			continue
@@ -74,4 +84,33 @@ func (b *Gate) GetFuturesTicker() ([]CexResultListItem, error) {
 	}
 
 	return cexResult, nil
+}
+
+type cexInfoListItemGate struct {
+	Symbol string `json:"name"`
+	Status string `json:"status"`
+}
+
+func (g *Gate) getCexInfo() (map[string]bool, error) {
+	resp, err := g.client.Get(g.config.GateCexInfoUrl)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result []cexInfoListItemGate
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
+	validated := make(map[string]bool)
+	for _, symbol := range result {
+		if symbol.Status == "trading" {
+			validated[symbol.Symbol] = true
+		}
+	}
+
+	return validated, nil
 }

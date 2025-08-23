@@ -12,10 +12,14 @@ type Config struct {
 	ChatID            int64
 	BinanceTickerUrl  string
 	BinanceCexInfoUrl string
-	BybitUrl          string
-	GateUrl           string
-	KucoinUrl         string
-	MexcUrl           string
+	BybitTickerUrl    string
+	BybitCexInfoUrl   string
+	GateTickerUrl     string
+	GateCexInfoUrl    string
+	KucoinTickerUrl   string
+	KucoinCexInfoUrl  string
+	MexcTickerUrl     string
+	MexcCexInfoUrl    string
 	MinPairSpread     float64
 	MaxPairSpread     float64
 	CoingeckoBulkData string
@@ -36,10 +40,14 @@ func NewConfig() Config {
 		ChatID:            viper.GetInt64("CHAT_ID"),
 		BinanceTickerUrl:  viper.GetString("BINANCE_URL"),
 		BinanceCexInfoUrl: viper.GetString("BINANCE1_URL"),
-		BybitUrl:          viper.GetString("BYBIT_URL"),
-		GateUrl:           viper.GetString("GATE_URL"),
-		KucoinUrl:         viper.GetString("KUCOIN_URL"),
-		MexcUrl:           viper.GetString("MEXC_URL"),
+		BybitTickerUrl:    viper.GetString("BYBIT_URL"),
+		BybitCexInfoUrl:   viper.GetString("BYBIT_URL1"),
+		GateTickerUrl:     viper.GetString("GATE_URL"),
+		GateCexInfoUrl:    viper.GetString("GATE1_URL"),
+		KucoinTickerUrl:   viper.GetString("KUCOIN_URL"),
+		KucoinCexInfoUrl:  viper.GetString("KUCOIN1_URL"),
+		MexcTickerUrl:     viper.GetString("MEXC_URL"),
+		MexcCexInfoUrl:    viper.GetString("MEXC1_URL"),
 		MinPairSpread:     viper.GetFloat64("MIN_PAIR_SPREAD"),
 		MaxPairSpread:     viper.GetFloat64("MAX_PAIR_SPREAD"),
 		CoingeckoBulkData: viper.GetString("COINGECKO_BULK_DATA"),

@@ -112,7 +112,7 @@ func (s *Services) SeekPairs() ([]models.Pair, error) {
 		}
 
 		spread := ((max.Price - min.Price) / min.Price) * 100.0
-		if spread > 5 {
+		if spread > s.config.MinPairSpread {
 			pairs = append(pairs, models.Pair{
 				PriceHigh:      max,
 				PriceLow:       min,

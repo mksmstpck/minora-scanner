@@ -33,8 +33,14 @@ type dataMexc struct {
 	LastPrice float64 `json:"lastPrice"`
 }
 
-func (b *Mexc) GetFuturesTicker() ([]CexResultListItem, error) {
-	resp, err := b.client.Get(b.config.MexcUrl)
+func (m *Mexc) GetFuturesTicker() ([]CexResultListItem, error) {
+	activeSymbols, err := m.getCexInfo()
+	if err != nil {
+		logrus.Errorf("an error occured %s", err)
+		return nil, err
+	}
+
+	resp, err := m.client.Get(m.config.MexcTickerUrl)
 	if err != nil {
 		log.Printf("an error occured %s", err)
 		return nil, err
@@ -50,6 +56,10 @@ func (b *Mexc) GetFuturesTicker() ([]CexResultListItem, error) {
 
 	var cexResult []CexResultListItem
 	for _, r := range result.Data {
+		if !activeSymbols[r.Symbol] {
+			continue
+		}
+
 		if r.LastPrice == 0 {
 			logrus.Printf("empty price string for %s", r.Symbol)
 			continue
@@ -71,4 +81,37 @@ func (b *Mexc) GetFuturesTicker() ([]CexResultListItem, error) {
 	}
 
 	return cexResult, nil
+}
+
+type resultMexc struct {
+	Data []dataListItemMexc `json:"data"`
+}
+
+type dataListItemMexc struct {
+	Symbol string `json:"symbol"`
+	State  int    `json:"state"`
+}
+
+func (m *Mexc) getCexInfo() (map[string]bool, error) {
+	resp, err := m.client.Get(m.config.MexcCexInfoUrl)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result resultMexc
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
+	validated := make(map[string]bool)
+	for _, symbol := range result.Data {
+		if symbol.State == 0 {
+			validated[symbol.Symbol] = true
+		}
+	}
+
+	return validated, nil
 }
